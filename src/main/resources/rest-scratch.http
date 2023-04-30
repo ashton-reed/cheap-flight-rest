@@ -5,26 +5,26 @@ Content-Type: application/json
 {
   "query": {
     "market": "US",
-    "locale": "en-GB",
-    "currency": "EUR",
+    "locale": "en-US",
+    "currency": "USD",
     "queryLegs": [
       {
         "originPlaceId": {
-          "iata": "LHR"
+          "iata": "JFK"
         },
         "destinationPlaceId": {
-        "iata": "DXB"
+        "iata": "PSP"
       },
         "date": {
           "year": 2023,
-          "month": 9,
+          "month": 5,
           "day": 20
         }
       }
     ],
     "cabinClass": "CABIN_CLASS_ECONOMY",
 
-    "adults": 2,
+    "adults": 1,
     "childrenAges": [
       3,
       9

@@ -1,4 +1,4 @@
-package com.ashton.reed.cheapflightrest.controller.flight;
+package com.ashton.reed.cheapflightrest.models;
 
 import java.util.List;
     class Date {
@@ -85,12 +85,8 @@ import java.util.List;
  *         ]
  *
  */
-class QueryLeg {
+    class QueryLeg {
         public OriginPlaceId originPlaceId;
         public DestinationPlaceId destinationPlaceId;
         public Date date;
-    }
-
-    class Root {
-        public Query query;
     }
