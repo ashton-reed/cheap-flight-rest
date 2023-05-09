@@ -24,10 +24,6 @@ Content-Type: application/json
     ],
     "cabinClass": "CABIN_CLASS_ECONOMY",
 
-    "adults": 1,
-    "childrenAges": [
-      3,
-      9
-    ]
+    "adults": 1
   }
 }

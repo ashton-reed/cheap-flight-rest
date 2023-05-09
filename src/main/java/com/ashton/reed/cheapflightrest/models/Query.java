@@ -50,7 +50,6 @@ import java.util.List;
         /**
          * minItems: 0 maxItems: 8
          */
-        public List<Integer> childrenAges;
     }
 /**
  * Note: Want to add a return flight add another date to the list

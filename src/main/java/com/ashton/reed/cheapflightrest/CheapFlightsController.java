@@ -1,12 +1,12 @@
-package com.ashton.reed.cheapflightrest.controller.flights;
+package com.ashton.reed.cheapflightrest;
 
 import com.ashton.reed.cheapflightrest.models.Root;
-import com.ashton.reed.cheapflightrest.service.CheapFlightService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @RestController
@@ -19,16 +19,16 @@ public class CheapFlightsController {
     }
 
     @PostMapping(value = "/flight-query", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public void flights(@RequestBody Root input) {
         try {
             var httpResponse = cheapFlightService.getFlightInfo(input);
-            System.out.println(httpResponse.body());
-            if (httpResponse.statusCode() != 200) {
-                System.out.println("aya it worked");
+            if (httpResponse.statusCode() == 500) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } catch(Exception e) {
-            log.error("Error: When calling getFlightInfo() ",e);
+            log.error(String.format("Error: POST request to SkyScanner API [ %s ]",e));
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
 }

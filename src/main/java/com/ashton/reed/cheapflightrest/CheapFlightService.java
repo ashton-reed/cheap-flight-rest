@@ -1,4 +1,4 @@
-package com.ashton.reed.cheapflightrest.service;
+package com.ashton.reed.cheapflightrest;
 
 import com.ashton.reed.cheapflightrest.models.Root;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +13,7 @@ import java.net.http.HttpResponse;
 public class CheapFlightService {
 
     public HttpResponse<String> getFlightInfo(Root input) throws IOException, InterruptedException {
+        // Converting (POJO) input to JSON
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper
                 .writerWithDefaultPrettyPrinter()
