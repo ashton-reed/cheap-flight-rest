@@ -29,15 +29,28 @@ public class CheapFlightService {
                 .build();
         return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
+
+    /**
+     * Using JSONObjects to traverse JSON because we do
+     * not know the Itineraries ID's at runtime when they are generated
+     * @param jsonObject
+     * @return all Itineraries generated
+     */
     public JSONArray getAllItinerariesId(JSONObject jsonObject) {
         return jsonObject.getJSONObject("content")
                 .getJSONObject("results")
                 .getJSONObject( "itineraries").names();
     }
-    public JSONObject getItineraryById(JSONObject jsonObject, JSONArray itineraryId) {
+
+    /**
+     * @param jsonObject
+     * @param itinerariesId
+     * @return Itinerary based on ID
+     */
+    public JSONObject getItineraryById(JSONObject jsonObject, JSONArray itinerariesId) {
       return jsonObject.getJSONObject("content")
                 .getJSONObject("results")
-                .getJSONObject( "itineraries")
-                .getJSONObject((String) itineraryId.get(2));
+                .getJSONObject("itineraries")
+                .getJSONObject((String) itinerariesId.get(2));
     }
 }
