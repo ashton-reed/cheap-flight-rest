@@ -37,9 +37,13 @@ public class CheapFlightService {
      * @return all Itineraries generated
      */
     public JSONArray getAllItinerariesId(JSONObject jsonObject) {
-        return jsonObject.getJSONObject("content")
-                .getJSONObject("results")
-                .getJSONObject( "itineraries").names();
+        try {
+            return jsonObject.getJSONObject("content")
+                    .getJSONObject("results")
+                    .getJSONObject("itineraries").names();
+        } catch (Exception e) {
+            throw new RuntimeException(String.format("Error getting ALL Itineraries ID's %s", e));
+        }
     }
 
     /**
@@ -48,9 +52,13 @@ public class CheapFlightService {
      * @return Itinerary based on ID
      */
     public JSONObject getItineraryById(JSONObject jsonObject, JSONArray itinerariesId) {
-      return jsonObject.getJSONObject("content")
-                .getJSONObject("results")
-                .getJSONObject("itineraries")
-                .getJSONObject((String) itinerariesId.get(2));
+         try {
+             return jsonObject.getJSONObject("content")
+                     .getJSONObject("results")
+                     .getJSONObject("itineraries")
+                     .getJSONObject((String) itinerariesId.get(2));
+         } catch (Exception e) {
+             throw new RuntimeException(String.format("Error getting itinerary based on ID given %s", e));
+         }
     }
 }

@@ -25,7 +25,6 @@ public class CheapFlightsController {
     }
 
     @PostMapping(value = "/flight-query", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ResponseStatus(HttpStatus.CREATED)
     public void flights(@RequestBody Root input) {
         try {
             var httpResponse = cheapFlightService.getFlightInfo(input);
@@ -40,13 +39,9 @@ public class CheapFlightsController {
 
             ObjectMapper objectMapper = new ObjectMapper();
 
-            String requestBody = objectMapper
-                    .writerWithDefaultPrettyPrinter()
-                    .writeValuesAsArray(pricingOptions);
-            System.out.println(requestBody.);
+            System.out.println(pricingOptions);
         } catch(Exception e) {
-            log.error(String.format("Error: POST request to SkyScanner API [ %s ]",e));
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new RuntimeException(String.format("Get request failed %s", e));
         }
     }
 }
