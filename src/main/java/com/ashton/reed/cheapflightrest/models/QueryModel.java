@@ -1,5 +1,5 @@
 package com.ashton.reed.cheapflightrest.models;
 
-public class Root {
+public class QueryModel {
     public Query query;
 }

@@ -1,5 +1,5 @@
 ### testing
-POST http://localhost:8080/flight-query
+POST http://localhost:8080/flight-price
 Content-Type: application/json
 
 {

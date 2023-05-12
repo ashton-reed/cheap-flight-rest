@@ -1,6 +1,6 @@
 package com.ashton.reed.cheapflightrest;
 
-import com.ashton.reed.cheapflightrest.models.Root;
+import com.ashton.reed.cheapflightrest.models.QueryModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,12 +14,12 @@ import java.net.http.HttpResponse;
 @Service
 public class CheapFlightService {
 
-    public HttpResponse<String> getFlightInfo(Root input) throws IOException, InterruptedException {
+    public HttpResponse<String> getFlightInfo(QueryModel flightItinerary) throws IOException, InterruptedException {
         // Converting (POJO)input to JSON
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper
                 .writerWithDefaultPrettyPrinter()
-                .writeValueAsString(input);
+                .writeValueAsString(flightItinerary);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://skyscanner-api.p.rapidapi.com/v3/flights/live/search/create"))
                 .header("content-type", "application/json")
@@ -33,11 +33,12 @@ public class CheapFlightService {
     /**
      * Using JSONObjects to traverse JSON because we do
      * not know the Itineraries ID's at runtime when they are generated
-     * @param jsonObject
+     * @param httpResponseBody
      * @return all Itineraries generated
      */
-    public JSONArray getAllItinerariesId(JSONObject jsonObject) {
+    public JSONArray getAllItinerariesId(final String httpResponseBody) {
         try {
+            JSONObject jsonObject = new JSONObject(httpResponseBody);
             return jsonObject.getJSONObject("content")
                     .getJSONObject("results")
                     .getJSONObject("itineraries").names();
@@ -47,16 +48,17 @@ public class CheapFlightService {
     }
 
     /**
-     * @param jsonObject
+     * @param httpResponseBody
      * @param itinerariesId
      * @return Itinerary based on ID
      */
-    public JSONObject getItineraryById(JSONObject jsonObject, JSONArray itinerariesId) {
+    public JSONObject getItineraryById(final String httpResponseBody, final JSONArray itinerariesId) {
          try {
+             JSONObject jsonObject = new JSONObject(httpResponseBody);
              return jsonObject.getJSONObject("content")
                      .getJSONObject("results")
                      .getJSONObject("itineraries")
-                     .getJSONObject((String) itinerariesId.get(2));
+                     .getJSONObject((String) itinerariesId.get(1));
          } catch (Exception e) {
              throw new RuntimeException(String.format("Error getting itinerary based on ID given %s", e));
          }
