@@ -34,6 +34,7 @@ public class FlightController {
 
     @GetMapping(value = "/test")
     public String testing() {
+        log.info("THE GET REQUEST FOR TESTING WAS CALLED");
         return "THIS ENDPOINT WORKS";
     }
 }
