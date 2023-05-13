@@ -18,17 +18,22 @@ public class FlightController {
         this.cheapFlightService = cheapFlightService;
     }
 
-    @PostMapping(value = "/flight-price", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public void flights(@RequestBody final QueryModel flightItinerary) {
+    @PostMapping(value = "/cheapest-flight-price", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public @ResponseBody Object flights(@RequestBody final QueryModel flightItinerary) {
         try {
             var httpResponse = cheapFlightService.getFlightInfo(flightItinerary);
-            JSONArray itinerariesId = cheapFlightService.getAllItinerariesId(httpResponse.body().toString());
-            JSONObject itineraryById = cheapFlightService.getItineraryById(httpResponse.body().toString(), itinerariesId);
+            JSONArray itinerariesId = cheapFlightService.getAllItinerariesId(httpResponse.body());
+            JSONObject itineraryById = cheapFlightService.getItineraryById(httpResponse.body(), itinerariesId);
             var pricingOptions = itineraryById.getJSONArray("pricingOptions");
             var something = pricingOptions.getJSONObject(0);
-            System.out.println("this is the price!!! \t\t"+something.getJSONObject("price").get("amount"));
+           return something.getJSONObject("price").get("amount");
         } catch(Exception e) {
             throw new RuntimeException(String.format("Get request failed %s", e));
         }
+    }
+
+    @GetMapping(value = "/test")
+    public String testing() {
+        return "THIS ENDPOINT WORKS";
     }
 }
