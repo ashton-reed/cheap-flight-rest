@@ -27,3 +27,11 @@ Content-Type: application/json
     "adults": 1
   }
 }
+
+### testing
+GET http://localhost:8080/test
+Content-Type: application/json
+
+{
+
+}
