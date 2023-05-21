@@ -1,5 +1,5 @@
 ### testing
-POST http://localhost:8080/cheapest-flight-price
+POST http://localhost/cheapest-flight-price
 Content-Type: application/json
 
 {
@@ -17,7 +17,7 @@ Content-Type: application/json
       },
         "date": {
           "year": 2023,
-          "month": 5,
+          "month": 8,
           "day": 20
         }
       }
