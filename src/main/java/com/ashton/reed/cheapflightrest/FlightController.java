@@ -16,17 +16,12 @@ public class FlightController {
         this.cheapFlightService = cheapFlightService;
     }
 
-    //TODO: RE-FACTOR AND MOVE ALL THIS TO THE SERVICE CLASS
-
     @PostMapping(value = "/cheapest-flight-price", produces = {MediaType.APPLICATION_JSON_VALUE})
     public @ResponseBody void flights(@RequestBody final QueryModel flightItinerary) {
         try {
-
-             cheapFlightService.getFlightInfo(flightItinerary);
-//            JSONArray allItineraryIds = cheapFlightService.getAllItinerariesId(httpResponse.body());
-//            return cheapFlightService.getItineraryById(httpResponse.body(), allItineraryIds);
+            cheapFlightService.getFlightInfo(flightItinerary);
         } catch(Exception e) {
-            throw new RuntimeException(String.format("Get request failed %s", e));
+            throw new RuntimeException(String.format("Failed GET request %s", e));
         }
     }
 

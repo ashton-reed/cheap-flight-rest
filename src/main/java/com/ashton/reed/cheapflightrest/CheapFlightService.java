@@ -35,43 +35,26 @@ public class CheapFlightService {
 
         var response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         var responseModel = objectMapper.readValue(response.body(), ResponseModel.class);
+        var cheapestItineraryId = responseModel.content.sortingOptions.cheapest.get(0).itineraryId;
 
-        System.out.println(responseModel.content.sortingOptions.cheapest.get(0).itineraryId);
+        var itineraryInformation = getItineraryById(response.body(), cheapestItineraryId);
+        System.out.println(itineraryInformation);
+        var cheapPrice = itineraryInformation.getJSONObject("price").get("amount");
+        var cheapPriceLink = itineraryInformation.getJSONArray("items").get(0);
+
         System.out.println("You made it here");
     }
 
-    /**
-     * Using JSONObjects to traverse JSON because we do
-     * not know the Itineraries ID's at runtime when they are generated
-     * @param httpResponseBody Flight Query
-     * @return all Itineraries ID's from
-     */
-    public JSONArray getAllItinerariesId(final String httpResponseBody) {
-        try {
-            JSONObject jsonObject = new JSONObject(httpResponseBody);
-            return jsonObject.getJSONObject("content")
-                    .getJSONObject("results")
-                    .getJSONObject("itineraries").names();
-        } catch (Exception e) {
-            throw new RuntimeException(String.format("Error getting ALL Itineraries ID's %s", e));
-        }
-    }
 
-    /**
-     * @param httpResponseBody Flight Query
-     * @param itinerariesId All itinerary ID's
-     * @return Itinerary based on ID
-     */
-    public Object getItineraryById(final String httpResponseBody, final JSONArray itinerariesId) {
+    public JSONObject getItineraryById(final String httpResponseBody, final String itineraryId) {
          try {
             JSONObject jsonObject = new JSONObject(httpResponseBody);
             JSONObject itineraryById = jsonObject.getJSONObject("content")
                 .getJSONObject("results")
                 .getJSONObject("itineraries")
-                .getJSONObject((String) itinerariesId.get(1)); //TODO: pass through cheapest ID, this is hardCoded
+                .getJSONObject(itineraryId);
             var pricingOptions = itineraryById.getJSONArray("pricingOptions");
-            var something = pricingOptions.getJSONObject(0);
-            return something.getJSONObject("price").get("amount");
+            return pricingOptions.getJSONObject(0);
          } catch (Exception e) {
              throw new RuntimeException(String.format("Error getting itinerary based on ID given %s", e));
          }
