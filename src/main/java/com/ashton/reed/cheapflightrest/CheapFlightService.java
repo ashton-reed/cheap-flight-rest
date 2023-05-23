@@ -38,13 +38,13 @@ public class CheapFlightService {
         var cheapestItineraryId = responseModel.content.sortingOptions.cheapest.get(0).itineraryId;
 
         var itineraryInformation = getItineraryById(response.body(), cheapestItineraryId);
-        System.out.println(itineraryInformation);
+
         var cheapPrice = itineraryInformation.getJSONObject("price").get("amount");
-        var cheapPriceLink = itineraryInformation.getJSONArray("items").get(0);
+        var cheapPriceLink = itineraryInformation.getJSONArray("items").getJSONObject(0);
+        var testing = cheapPriceLink.get("deepLink");
+        System.out.println(testing);
 
-        System.out.println("You made it testing");
     }
-
 
     public JSONObject getItineraryById(final String httpResponseBody, final String itineraryId) {
          try {
