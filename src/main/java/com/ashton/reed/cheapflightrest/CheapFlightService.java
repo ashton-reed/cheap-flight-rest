@@ -42,7 +42,7 @@ public class CheapFlightService {
         var cheapPrice = itineraryInformation.getJSONObject("price").get("amount");
         var cheapPriceLink = itineraryInformation.getJSONArray("items").get(0);
 
-        System.out.println("You made it here");
+        System.out.println("You made it testing");
     }
 
 
