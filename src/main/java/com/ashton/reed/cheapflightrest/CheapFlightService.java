@@ -1,7 +1,7 @@
 package com.ashton.reed.cheapflightrest;
 
 import com.ashton.reed.cheapflightrest.models.QueryModel;
-import com.ashton.reed.cheapflightrest.models.ResponseModel;
+import com.ashton.reed.cheapflightrest.models.SkyScannerModel;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
@@ -17,14 +17,23 @@ import java.util.concurrent.ExecutionException;
 @Service
 public class CheapFlightService {
 
-    public void getFlightInfo(QueryModel flightItinerary) throws IOException, InterruptedException, ExecutionException {
-        // Converting (POJO)input to JSON
+    final static int FIRST_ELEMENT = 0;
+
+    /**
+     * @param flightItinerary flightItinerary
+     * @throws IOException IOException
+     * @throws InterruptedException InterruptedException
+     * @throws ExecutionException ExecutionException
+     */
+    public void getFlightInfo(final QueryModel flightItinerary) throws IOException, InterruptedException, ExecutionException {
+
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-
+        // Converting (POJO)input to JSON
         String requestBody = objectMapper
                 .writerWithDefaultPrettyPrinter()
                 .writeValueAsString(flightItinerary);
+
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://skyscanner-api.p.rapidapi.com/v3/flights/live/search/create"))
                 .header("content-type", "application/json")
@@ -33,19 +42,27 @@ public class CheapFlightService {
                 .method("POST", HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 
-        var response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        var responseModel = objectMapper.readValue(response.body(), ResponseModel.class);
-        var cheapestItineraryId = responseModel.content.sortingOptions.cheapest.get(0).itineraryId;
+        HttpResponse<String> skyScannerResponse = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        SkyScannerModel skyScannerModel = objectMapper.readValue(skyScannerResponse.body(), SkyScannerModel.class);
+        String cheapestItineraryId = skyScannerModel.content.sortingOptions.cheapest.get(FIRST_ELEMENT).itineraryId;
+        if (cheapestItineraryId == null) {
+            //TODO: make POLL request to api and log it
+            throw new RuntimeException("Unable to get cheapestItineraryId get(FIRST_ELEMENT)");
+        }
 
-        var itineraryInformation = getItineraryById(response.body(), cheapestItineraryId);
-
+        JSONObject itineraryInformation = getItineraryById(skyScannerResponse.body(), cheapestItineraryId);
         var cheapPrice = itineraryInformation.getJSONObject("price").get("amount");
-        var cheapPriceLink = itineraryInformation.getJSONArray("items").getJSONObject(0);
+        JSONObject cheapPriceLink = itineraryInformation.getJSONArray("items").getJSONObject(0);
         var testing = cheapPriceLink.get("deepLink");
         System.out.println(testing);
-
     }
 
+    /**
+     *
+     * @param httpResponseBody response from SkyScanner API
+     * @param itineraryId cheapest itineraryId
+     * @return first element from pricingOptions
+     */
     public JSONObject getItineraryById(final String httpResponseBody, final String itineraryId) {
          try {
             JSONObject jsonObject = new JSONObject(httpResponseBody);
@@ -53,7 +70,7 @@ public class CheapFlightService {
                 .getJSONObject("results")
                 .getJSONObject("itineraries")
                 .getJSONObject(itineraryId);
-            var pricingOptions = itineraryById.getJSONArray("pricingOptions");
+            JSONArray pricingOptions = itineraryById.getJSONArray("pricingOptions");
             return pricingOptions.getJSONObject(0);
          } catch (Exception e) {
              throw new RuntimeException(String.format("Error getting itinerary based on ID given %s", e));
