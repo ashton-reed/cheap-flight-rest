@@ -21,7 +21,7 @@ public class CheapFlightService {
 
     /**
      * @param flightItinerary flightItinerary
-     * @return
+     * @return Link to buy flight
      * @throws IOException          IOException
      * @throws InterruptedException InterruptedException
      * @throws ExecutionException   ExecutionException
