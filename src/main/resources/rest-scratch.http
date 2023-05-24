@@ -1,5 +1,5 @@
 ### testing
-POST http://localhost/cheapest-flight-price
+POST http://localhost/api/v1/cheapest-flight-price
 Content-Type: application/json
 
 {

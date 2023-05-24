@@ -21,11 +21,12 @@ public class CheapFlightService {
 
     /**
      * @param flightItinerary flightItinerary
-     * @throws IOException IOException
+     * @return
+     * @throws IOException          IOException
      * @throws InterruptedException InterruptedException
-     * @throws ExecutionException ExecutionException
+     * @throws ExecutionException   ExecutionException
      */
-    public void getFlightInfo(final QueryModel flightItinerary) throws IOException, InterruptedException, ExecutionException {
+    public Object getFlightInfo(final QueryModel flightItinerary) throws IOException, InterruptedException, ExecutionException {
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -53,8 +54,8 @@ public class CheapFlightService {
         JSONObject itineraryInformation = getItineraryById(skyScannerResponse.body(), cheapestItineraryId);
         var cheapPrice = itineraryInformation.getJSONObject("price").get("amount");
         JSONObject cheapPriceLink = itineraryInformation.getJSONArray("items").getJSONObject(0);
-        var testing = cheapPriceLink.get("deepLink");
-        System.out.println(testing);
+
+        return cheapPriceLink.get("deepLink");
     }
 
     /**

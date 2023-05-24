@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
+@RequestMapping("/api/v1")
 public class FlightController {
     private final CheapFlightService cheapFlightService;
 
@@ -17,9 +18,9 @@ public class FlightController {
     }
 
     @PostMapping(value = "/cheapest-flight-price", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public @ResponseBody void flights(@RequestBody final QueryModel flightItinerary) {
+    public @ResponseBody Object flights(@RequestBody final QueryModel flightItinerary) {
         try {
-            cheapFlightService.getFlightInfo(flightItinerary);
+           return cheapFlightService.getFlightInfo(flightItinerary);
         } catch(Exception e) {
             throw new RuntimeException(String.format("Failed GET request %s", e));
         }
