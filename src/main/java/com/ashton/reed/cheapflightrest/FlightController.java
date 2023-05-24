@@ -17,10 +17,12 @@ public class FlightController {
         this.cheapFlightService = cheapFlightService;
     }
 
-    @PostMapping(value = "/cheapest-flight-price", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public @ResponseBody Object flights(@RequestBody final QueryModel flightItinerary) {
+    @GetMapping(value = "/cheapest-flight-price", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public @ResponseBody Object flights(@RequestParam(value = "originPlaceId") final String originPlaceId,
+                                        @RequestParam(value = "destinationPlaceId") final String destinationPlaceId,
+                                        @RequestParam(value = "date") final Integer date) {
         try {
-           return cheapFlightService.getFlightInfo(flightItinerary);
+           return cheapFlightService.getFlightInfo(originPlaceId, destinationPlaceId, date);
         } catch(Exception e) {
             throw new RuntimeException(String.format("Failed GET request %s", e));
         }

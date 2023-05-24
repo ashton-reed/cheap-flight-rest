@@ -1,7 +1,6 @@
 package com.ashton.reed.cheapflightrest;
 
-import com.ashton.reed.cheapflightrest.models.QueryModel;
-import com.ashton.reed.cheapflightrest.models.SkyScannerModel;
+import com.ashton.reed.cheapflightrest.models.*;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
@@ -12,7 +11,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.concurrent.ExecutionException;
+import java.util.ArrayList;
 
 @Service
 public class CheapFlightService {
@@ -20,20 +19,25 @@ public class CheapFlightService {
     final static int FIRST_ELEMENT = 0;
 
     /**
-     * @param flightItinerary flightItinerary
-     * @return Link to buy flight
-     * @throws IOException          IOException
+     * @param originPlaceId originPlaceId
+     * @param destinationPlaceId destinationPlaceId
+     * @param date date
+     * @return Link to cheap flight
+     * @throws IOException IOException
      * @throws InterruptedException InterruptedException
-     * @throws ExecutionException   ExecutionException
      */
-    public Object getFlightInfo(final QueryModel flightItinerary) throws IOException, InterruptedException, ExecutionException {
+    public Object getFlightInfo(final String originPlaceId,
+                                final String destinationPlaceId,
+                                final int date) throws IOException, InterruptedException {
+
+        QueryModel model = setMarketUS(originPlaceId,destinationPlaceId,date);
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         // Converting (POJO)input to JSON
         String requestBody = objectMapper
                 .writerWithDefaultPrettyPrinter()
-                .writeValueAsString(flightItinerary);
+                .writeValueAsString(model);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://skyscanner-api.p.rapidapi.com/v3/flights/live/search/create"))
@@ -76,5 +80,59 @@ public class CheapFlightService {
          } catch (Exception e) {
              throw new RuntimeException(String.format("Error getting itinerary based on ID given %s", e));
          }
+    }
+
+    /**
+     *
+     * @param originPlaceId originPlaceId
+     * @param destinationPlaceId destinationPlaceId
+     * @param monthDayYear monthDayYear
+     * @return model
+     */
+    public QueryModel setMarketUS(final String originPlaceId,
+                                  final String destinationPlaceId,
+                                  final int monthDayYear) {
+        Query query = new Query();
+        QueryModel queryModel = new QueryModel();
+        QueryLeg queryLeg = new QueryLeg();
+        OriginPlaceId originPlaceIdObj = new OriginPlaceId();
+        DestinationPlaceId destinationPlaceIdObj = new DestinationPlaceId();
+
+        query.queryLegs = new ArrayList<>();
+        query.market = "US";
+        query.locale = "en-US";
+        query.currency = "USD";
+        query.cabinClass = "CABIN_CLASS_ECONOMY";
+        query.adults = 1;
+
+        originPlaceIdObj.iata = originPlaceId;
+        destinationPlaceIdObj.iata = destinationPlaceId;
+        queryLeg.date = convertDate(monthDayYear);
+
+        queryLeg.originPlaceId = originPlaceIdObj;
+        queryLeg.destinationPlaceId = destinationPlaceIdObj;
+
+        query.queryLegs.add(queryLeg);
+        queryModel.query = query;
+
+        return queryModel;
+    }
+
+    /**
+     * @param monthDayYear 03232023 monthDayYear
+     * @return date
+     */
+    public Date convertDate(final int monthDayYear) {
+        Date date = new Date();
+        String number = String.valueOf(monthDayYear);
+        var day = Integer.parseInt(number.substring(0,2));
+        var month = Integer.parseInt(number.substring(2,4));
+        var year = Integer.parseInt(number.substring(4,8));
+
+        date.day = day;
+        date.month = month;
+        date.year = year;
+
+        return date;
     }
 }

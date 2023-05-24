@@ -29,7 +29,7 @@ Content-Type: application/json
 }
 
 ### testing
-GET http://localhost:8080/test
+GET http://localhost/api/v1/cheapest-flight-price?originPlaceId=JFK&destinationPlaceId=PSP&date=10112023
 Content-Type: application/json
 
 {
